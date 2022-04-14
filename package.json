@@ -1,6 +1,7 @@
 {
   "name": "odin_javascript_11_wheres_waldo",
   "version": "0.1.0",
+  "homepage": "https://jonro2955.github.io/odin_javascript_11_wheres_waldo/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
@@ -12,6 +13,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "git": "npm run deploy && git add -A && git commit -m",
+    "postgit": "git push --all",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -34,5 +39,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
   }
 }

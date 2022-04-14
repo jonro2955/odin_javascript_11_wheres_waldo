@@ -1,10 +1,10 @@
-# name
+# Where's Waldo?
 
 description
 
 <hr/>
 
-[Live Demo](url)
+[Live Demo](https://jonro2955.github.io/odin_javascript_11_wheres_waldo/)
 
 ### Focus
 

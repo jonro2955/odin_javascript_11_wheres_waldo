@@ -22,7 +22,7 @@ Create a local git project folder, set up a basic file structure for your projec
 
 - $ git commit -am <msg>
 
-Create a new repository on GitHub without a readme, license, or gitignore files and copy the SSH URL (do not copy the HTTP URL).
+Create a new repository on GitHub without a readme, license, or gitignore files and copy the SSH URL (not the HTTP URL).
 
 CD into your local Git project folder and run:
 
@@ -30,34 +30,6 @@ CD into your local Git project folder and run:
 
 Push your local repo’s main branch to your remote GitHub repository (origin):
 
-- $ git push origin main
-
-### Subtree Push:
-
-If you used a bundler like Webpack to output your production code to a separate folder named “dist” and want to serve that folder’s contents from your github pages hosting, you need to push that “dist” folder online into a separate branch in your remote’s origin root called “gh-pages“:
-
-- $ git subtree push --prefix dist origin gh-pages
-
-Note: This won’t work if you delete the gh-pages branch from github and try to redo the subtree push. If that’s the case, try this: https://gist.github.com/belohlavek/61dd16c08cd9c57a168408b9ac4121c2.
-
-And if after the above you get an error saying:
-
-- "Updates were rejected because a pushed branch tip is behind its remote counterpart. Check out this branch and integrate the remote changes (e.g. 'git pull ...') before pushing again",
-
-Then you need to goto github, delete the gh-pages branch, then run the subtree push command again, which will now work. However, this is a workaround that is only acceptable for personal projects only. If you want to do it properly to preserve the gh-pages branch commit history, you need to study the Git docs.
-
-### How to Create an empty Github repository and clone it to your local machine:
-
-Create an online repo on Github and copy the SSH URL. CD into your desired project folder and run:
-
-- $ git clone <SSH URL>
-
-Note: it is better to clone a locally created project to Github because bootstrapping projects using things like [- $ npx creat-react-app <projectName>] inside a cloned empty project folder will add an unneccessary parent folder called projectName.
-
-# So just creat a project folder locally using CRA or manually, cd into it, and
-
-- $ git remote add origin <SSH URL>
-- $ git commit -am <msg>
 - $ git push origin main
 
 ### How to deploy your create-react-app to GH-Pages
@@ -68,10 +40,8 @@ First, goto github.com and create a repository and add the remote to your local 
 
 Add, commit and push if not done:
 
-- $ git add -A
-- $ git commit -m 'commit message'
+- $ git commit -am 'commit message'
 - $ git push origin main
-  (or - $ npm run git -- '<YOUR COMMIT MESSAGE>')
 
 CD into your react app folder and install the GitHub Pages package as a dev-dependency:
 
@@ -95,7 +65,13 @@ Lastly, goto your github repo and make your gh pages your default branch. After 
 
 ### How to chain or combine commands into one:
 
-To combine the following 4 commands: (1) - $ npm run build (2) - $ gh-pages -deploy build (3) - $ git commit -am (4) - $ git push origin main,
+To combine the following 4 commands:
+
+- $ npm run build
+- $ gh-pages -deploy build
+- $ git commit -am
+- $ git push origin main
+
 place the following scripts inside package.json file’s "scripts" object:
 
 "scripts": {
@@ -108,13 +84,41 @@ place the following scripts inside package.json file’s "scripts" object:
 
 Then run:
 
-- $ npm run git -- '<YOUR COMMIT MESSAGE>'
+- $ npm run git '<MESSAGE>'
 
-(related: Setting up command aliases)
+### Git aliases:
 
-### Setting up command aliases:
+The command below lets us type "git c" instead of "git commit":
 
-Many cases (!external, chaining, etc)
+- $ git config --global alias.c commit
+
+To delete this alias, 
+
+- $ git config --global --unset alias.c
+
+If a command has more than one word, you need to use quotes:
+
+- $ git config --global alias.unstage 'reset HEAD --'
+
+If you want to run an external command rather than a Git subcommand, then you need to start the command with an exclamation: !. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing "git visual" to run "gitk":
+
+- $ git config --global alias.run '!npm run git'  
+
+To see a list of all aliases, we can read everything in git config:
+
+- $ git config --global --list
+
+Or we can read only aliases from git config using a regular expression: ^alias\. which matches all lines that start with the word "alias" with a single period . afterward.
+
+- $ git config --get-regexp '^alias\.'
+
+Finally, we can create another alias to list our aliases.
+
+- $ git config --global alias.aliases "config --get-regexp '^alias\.'"
+
+We can then use this alias to find all of our other aliases.
+
+- $ git aliases
 
 ### How to Initialize a local git project:
 
@@ -124,7 +128,7 @@ CD into a new project folder and run:
 
 ### Logging Branches
 
-- $ git log --oneline --decorate --graph –all
+- $ git log --oneline --decorate --graph --all
 
 ### Create a new branch
 
@@ -224,3 +228,19 @@ This will open up a commit message editor in the console asking you to enter a c
     4. Press Ctrl+X to exit
 
 Now if you go to .git and you will find the file "Merge_feature01", containing the merge message.
+
+
+### Subtree Push:
+
+If you used a bundler like Webpack to output your production code to a separate folder named “dist” and want to serve that folder’s contents from your github pages hosting, you need to push that “dist” folder online into a separate branch in your remote’s origin root called “gh-pages“:
+
+- $ git subtree push --prefix dist origin gh-pages
+
+Note: This won’t work if you delete the gh-pages branch from github and try to redo the subtree push. If that’s the case, try this: https://gist.github.com/belohlavek/61dd16c08cd9c57a168408b9ac4121c2.
+
+And if after the above you get an error saying:
+
+- "Updates were rejected because a pushed branch tip is behind its remote counterpart. Check out this branch and integrate the remote changes (e.g. 'git pull ...') before pushing again",
+
+Then you need to goto github, delete the gh-pages branch, then run the subtree push command again, which will now work. However, this is a workaround that is only acceptable for personal projects only. If you want to do it properly to preserve the gh-pages branch commit history, you need to study the Git docs.
+
