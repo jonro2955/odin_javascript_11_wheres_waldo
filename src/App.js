@@ -9,10 +9,10 @@ export default function App() {
     <HashRouter basename='/'>
       <Routes>
         {/* When you place a colon after the slash in the path string, you 
-        can make create new variable paths using the <Link> object's "to" 
-        parameter (see <GamePathTile/>). This "to" param creates a new 
+        can create new variable paths using the <Link> object's "to" 
+        parameter (see <GamePathTile/>). This "to" parameter creates a new 
         route, and the linked element (in this case <GamePage/>) will have 
-        access to the "to" param as "useParams().level" */}
+        access to the "to" parameter as "useParams().level" */}
         <Route path='/:level' element={<GamePage />} />
         <Route path='/records' element={<RecordsPage />} />
         <Route path='/' element={<HomePage />} />
