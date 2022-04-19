@@ -14,15 +14,34 @@ export default function GamePage() {
   }, [lastCoord]);
 
   const findables = {
-    planets: ['Mercury', 'Jupiter', 'Saturn'],
+    // planets: ['Mercury', 'Jupiter', 'Saturn'],
+    planets: [
+      { name: 'Mercury', x: '', y: '' },
+      { name: 'Jupiter', x: '', y: '' },
+      { name: 'Saturn', x: '', y: '' },
+    ],
     countries: ['Honduras', 'Central African Republic', 'Bulgaria'],
+    countriesCoords: {
+      honduras: { x: '', y: '' },
+      car: { x: '', y: '' },
+      bulgaria: { x: '', y: '' },
+    },
     games: ['Solid Snake', 'Lara Croft', 'Megaman'],
+    gamesCoords: {
+      snake: { x: '', y: '' },
+      lara: { x: '', y: '' },
+      megaman: { x: '', y: '' },
+    },
   };
 
   function objectives() {
+    let array = [];
     switch (level) {
       case 'Planets':
-        return findables['planets'].join(', ');
+        findables['planets'].forEach((planet) => {
+          array.push(planet['name']);
+        });
+        return array.join(', ');
       case 'Countries':
         return findables['countries'].join(', ');
       case 'Games':
