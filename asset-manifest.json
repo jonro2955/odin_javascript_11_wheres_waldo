@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/odin_javascript_11_wheres_waldo/static/css/main.c0c5b65a.css",
-    "main.js": "/odin_javascript_11_wheres_waldo/static/js/main.b1c6a289.js",
+    "main.js": "/odin_javascript_11_wheres_waldo/static/js/main.05531528.js",
     "static/media/planets.jpg": "/odin_javascript_11_wheres_waldo/static/media/planets.3de8ced99fcc0d527c78.jpg",
     "static/media/games.jpg": "/odin_javascript_11_wheres_waldo/static/media/games.2e7bf1f6ba8dcdc9da55.jpg",
     "static/media/countries.png": "/odin_javascript_11_wheres_waldo/static/media/countries.7bf53cafd4ef84cbeeca.png",
     "index.html": "/odin_javascript_11_wheres_waldo/index.html",
     "main.c0c5b65a.css.map": "/odin_javascript_11_wheres_waldo/static/css/main.c0c5b65a.css.map",
-    "main.b1c6a289.js.map": "/odin_javascript_11_wheres_waldo/static/js/main.b1c6a289.js.map"
+    "main.05531528.js.map": "/odin_javascript_11_wheres_waldo/static/js/main.05531528.js.map"
   },
   "entrypoints": [
     "static/css/main.c0c5b65a.css",
-    "static/js/main.b1c6a289.js"
+    "static/js/main.05531528.js"
   ]
 }
