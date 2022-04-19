@@ -5,7 +5,27 @@ import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascr
 
 export default function GamePage() {
   const level = useParams().level;
-  const image = () => {
+
+  const findables = {
+    planets: ['Mercury', 'Jupiter', 'Saturn'],
+    countries: ['Honduras', 'Central African Republic', 'Bulgaria'],
+    games: ['Solid Snake', 'Lara Croft', 'Megaman'],
+  };
+
+  function objectives() {
+    switch (level) {
+      case 'Planets':
+        return findables['planets'].join(', ');
+      case 'Countries':
+        return findables['countries'].join(', ');
+      case 'Games':
+        return findables['games'].join(', ');
+      default:
+        return null;
+    }
+  }
+
+  function image() {
     switch (level) {
       case 'Planets':
         return planetsImg;
@@ -16,12 +36,23 @@ export default function GamePage() {
       default:
         return null;
     }
-  };
+  }
+
+  function clickHandler(e) {
+    console.log(e.clientX, e.clientY);
+  }
 
   return (
     <div className='page'>
-      <h1>{level}</h1>
-      <img src={image()} alt={level} width='1100'></img>
+      <h2>{level}</h2>
+      <h6>Find: {objectives()}</h6>
+      <img
+        src={image()}
+        alt={level}
+        className='gameImage'
+        width='1150'
+        onClick={clickHandler}
+      ></img>
     </div>
   );
 }

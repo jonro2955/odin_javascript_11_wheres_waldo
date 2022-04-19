@@ -23,4 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 git-aliases.md
-git-cheatsheet.md
+cli-cheatsheet.md
+my-notes.txt
