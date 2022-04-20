@@ -5,54 +5,83 @@ import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_jav
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
 
 export default function GamePage() {
-  const clickedCoordsOutputDiv = document.getElementById('clickedCoordinates');
-  const level = useParams().level;
-  const [lastCoord, setLastCoord] = useState({ x: '', y: '' });
+  const gameImage = document.getElementById('gameImage');
+  const levelParam = useParams().levelParam;
+  const [lastClickedCoord, setlastClickedCoord] = useState({ x: '', y: '' });
+
   useEffect(() => {
-    document.getElementById('clickedCoordinates').textContent =
-      lastCoord['x'] + ', ' + lastCoord['y'];
-  }, [lastCoord]);
+    outputClickedCoords(lastClickedCoord);
+  }, [lastClickedCoord]);
 
-  const findables = {
-    // planets: ['Mercury', 'Jupiter', 'Saturn'],
-    planets: [
-      { name: 'Mercury', x: '', y: '' },
-      { name: 'Jupiter', x: '', y: '' },
-      { name: 'Saturn', x: '', y: '' },
-    ],
-    countries: ['Honduras', 'Central African Republic', 'Bulgaria'],
-    countriesCoords: {
-      honduras: { x: '', y: '' },
-      car: { x: '', y: '' },
-      bulgaria: { x: '', y: '' },
-    },
-    games: ['Solid Snake', 'Lara Croft', 'Megaman'],
-    gamesCoords: {
-      snake: { x: '', y: '' },
-      lara: { x: '', y: '' },
-      megaman: { x: '', y: '' },
-    },
-  };
+  function clickHandler(e) {
+    setlastClickedCoord({ x: e.pageX, y: e.pageY });
+  }
 
-  function objectives() {
-    let array = [];
-    switch (level) {
-      case 'Planets':
-        findables['planets'].forEach((planet) => {
-          array.push(planet['name']);
-        });
-        return array.join(', ');
-      case 'Countries':
-        return findables['countries'].join(', ');
-      case 'Games':
-        return findables['games'].join(', ');
-      default:
-        return null;
+  //console log the clicked coordinates
+  function outputClickedCoords(coords) {
+    //only if there is a value 
+    if (coords['x']) {
+      console.log(
+        'Clicked coordinate in pixels relative to the upper left corner of the image: ' +
+          (coords['x'] - gameImage.offsetLeft) +
+          ', ' +
+          (coords['y'] - gameImage.offsetTop)
+      );
     }
   }
 
-  function image() {
-    switch (level) {
+  const findables = {
+    /* Values 'x' and 'y' are predetermined distances of the centerpoint of each findable
+    'thing' inside the picture (i.e. a planet or the face of a game character chosen by me) 
+    relative to the upper left corner of the the img element rendered with a width of 1150px 
+    (achieved by using the img element's offsetLeft and offsetTop properties). Such a relative 
+    pixel coordinate does not change with the positioning of the image in the browser window 
+    (such as when the dev tools are opened) or the zoom level.
+    The center point is an approximation eyeballed by a human.
+    */
+    Planets: [
+      { name: 'Mercury', x: '822', y: '331' },
+      { name: 'Mars', x: '605', y: '348' },
+      { name: 'Neptune', x: '179', y: '443' },
+    ],
+    Countries: [
+      { name: 'Honduras', x: '245', y: '404' },
+      { name: 'Central African Republic', x: '595', y: '435' },
+      { name: 'Bulgaria', x: '607', y: '303' },
+    ],
+    Games: [
+      { name: "Solid Snake's face", x: '88', y: '314' },
+      { name: "Lara Croft's face", x: '241', y: '383' },
+      { name: "Megaman's face", x: '912', y: '156' },
+    ],
+  };
+
+  function getObjectivesString() {
+    let array = [];
+    switch (levelParam) {
+      case 'Planets':
+        findables['Planets'].forEach((item) => {
+          array.push(item['name']);
+        });
+        break;
+      case 'Countries':
+        findables['Countries'].forEach((item) => {
+          array.push(item['name']);
+        });
+        break;
+      case 'Games':
+        findables['Games'].forEach((item) => {
+          array.push(item['name']);
+        });
+        break;
+      default:
+        return null;
+    }
+    return array.join(', ');
+  }
+
+  function getImage() {
+    switch (levelParam) {
       case 'Planets':
         return planetsImg;
       case 'Countries':
@@ -70,32 +99,24 @@ export default function GamePage() {
     let ringCursor = document.querySelector('.ringCursor');
     ringCursor.style.display = 'initial';
     document.getElementById('gameImage').addEventListener('mousemove', (e) => {
-      //the ringCursor div's top and left style values are updated in response to mouse movements
+      //the top and left style values are updated in response to mouse movements
       ringCursor.style.top = e.pageY + 'px';
       ringCursor.style.left = e.pageX + 'px';
     });
   }
 
+  // Make ring cursor embelishment disappear outside image
   function mouseLeaveHandler() {
-    let ringCursor = document.querySelector('.ringCursor');
-    ringCursor.style.display = 'none';
-  }
-
-  // Open item selection menu at click location
-  function clickHandler(e) {
-    console.log(e.clientX, e.clientY);
-    setLastCoord({ x: e.clientX, y: e.clientY });
-    // document.getElementById('clickedCoordinates').textContent =
-    //   'Clicked Coordinates: ' + e.clientX + ', ' + e.clientY;
+    document.querySelector('.ringCursor').style.display = 'none';
   }
 
   return (
     <div className='page'>
-      <h2>{level}</h2>
-      <h6>Find: {objectives()}</h6>
+      <h2>{levelParam}</h2>
+      <h6>Find: {getObjectivesString()}</h6>
       <img
-        src={image()}
-        alt={level}
+        src={getImage()}
+        alt={levelParam}
         className='gameImage'
         id='gameImage'
         width='1150'
@@ -103,8 +124,8 @@ export default function GamePage() {
         onMouseLeave={mouseLeaveHandler}
         onClick={clickHandler}
       ></img>
+
       <div className='ringCursor'></div>
-      <div id='clickedCoordinates'></div>
     </div>
   );
 }

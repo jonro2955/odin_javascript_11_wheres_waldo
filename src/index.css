@@ -33,9 +33,9 @@
   align-items: center;
 }
 
-.gameImage {
+/* .gameImage {
   border: 5px solid black;
-}
+} */
 
 .ringCursor{
   display: none;
