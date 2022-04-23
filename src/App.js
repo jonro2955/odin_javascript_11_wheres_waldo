@@ -13,7 +13,7 @@ export default function App() {
         parameter (see <GamePathTile/>). This "to" parameter creates a new 
         route, and the linked element (in this case <GamePage/>) will have 
         access to the "to" parameter as "useParams().level" */}
-        <Route path='/:levelParam' element={<GamePage />} />
+        <Route path='/:level' element={<GamePage />} />
         <Route path='/records' element={<RecordsPage />} />
         <Route path='/' element={<HomePage />} />
       </Routes>

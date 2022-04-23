@@ -3,9 +3,9 @@ import planetsImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javas
 import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/countries.png';
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
 
-export default function GamePathTile(props) {
+export default function LevelTile(props) {
   const image = () => {
-    switch (props.pathName) {
+    switch (props.levelName) {
       case 'Planets':
         return planetsImg;
       case 'Countries':
@@ -19,10 +19,10 @@ export default function GamePathTile(props) {
 
   return (
     <div className='GamePathTile'>
-      <h3>{props.pathName}</h3>
+      <h3>{props.levelName}</h3>
       <Link
         className='GamePathLink'
-        to={`/${props.pathName}`}
+        to={`/${props.levelName}`}
         style={{
           backgroundImage: `url(${image()})`,
         }}

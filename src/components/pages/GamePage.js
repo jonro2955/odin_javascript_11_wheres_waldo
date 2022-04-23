@@ -1,10 +1,13 @@
 import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 import planetsImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/planets.jpg';
 import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/countries.png';
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
+import React from 'react';
 
 export default function GamePage() {
-  const levelParam = useParams().levelParam;
+  const level = useParams().level;
+  const [gameOn, setGameOn] = useState(false);
 
   const targets = {
     /* Values 'x' and 'y' are predetermined distances of the centerpoint of each findable
@@ -31,44 +34,43 @@ export default function GamePage() {
     ],
   };
 
-  function clickHandler(e) {
+  function imageClickHandler(e) {
     const gameImage = document.getElementById('gameImage');
     const coordX = e.pageX - gameImage.offsetLeft;
     const coordY = e.pageY - gameImage.offsetTop;
-    console.log(`${coordX}, ${coordY}`);
     const clickedCoordDiv = document.getElementById('clickedCoordDiv');
     clickedCoordDiv.textContent = `${coordX}, ${coordY}`;
-    switch (levelParam) {
+    switch (level) {
       case 'Planets':
-        if (807 < coordX && coordX < 837 && 316 < coordY && coordY < 346) {
+        if (802 < coordX && coordX < 842 && 311 < coordY && coordY < 351) {
           clickedCoordDiv.textContent = `Mercury`;
         }
-        if (590 < coordX && coordX < 620 && 333 < coordY && coordY < 363) {
+        if (585 < coordX && coordX < 625 && 328 < coordY && coordY < 368) {
           clickedCoordDiv.textContent = `Mars`;
         }
-        if (160 < coordX && coordX < 198 && 424 < coordY && coordY < 463) {
+        if (155 < coordX && coordX < 203 && 419 < coordY && coordY < 468) {
           clickedCoordDiv.textContent = `Neptune`;
         }
         break;
       case 'Countries':
-        if (235 < coordX && coordX < 255 && 394 < coordY && coordY < 414) {
+        if (230 < coordX && coordX < 260 && 389 < coordY && coordY < 419) {
           clickedCoordDiv.textContent = `Honduras`;
         }
-        if (575 < coordX && coordX < 615 && 420 < coordY && coordY < 450) {
+        if (570 < coordX && coordX < 620 && 415 < coordY && coordY < 455) {
           clickedCoordDiv.textContent = `Central African Republic`;
         }
-        if (597 < coordX && coordX < 617 && 293 < coordY && coordY < 313) {
+        if (592 < coordX && coordX < 622 && 288 < coordY && coordY < 318) {
           clickedCoordDiv.textContent = `Bulgaria`;
         }
         break;
       case 'Games':
-        if (73 < coordX && coordX < 103 && 299 < coordY && coordY < 329) {
+        if (68 < coordX && coordX < 108 && 294 < coordY && coordY < 334) {
           clickedCoordDiv.textContent = `Solid Snake's face`;
         }
-        if (226 < coordX && coordX < 256 && 368 < coordY && coordY < 398) {
+        if (221 < coordX && coordX < 261 && 363 < coordY && coordY < 403) {
           clickedCoordDiv.textContent = `Lara Croft's face`;
         }
-        if (897 < coordX && coordX < 927 && 141 < coordY && coordY < 171) {
+        if (892 < coordX && coordX < 932 && 136 < coordY && coordY < 176) {
           clickedCoordDiv.textContent = `Megaman's face`;
         }
         break;
@@ -79,7 +81,7 @@ export default function GamePage() {
 
   function getObjectivesString() {
     let array = [];
-    switch (levelParam) {
+    switch (level) {
       case 'Planets':
         targets['Planets'].forEach((target) => {
           array.push(target['name']);
@@ -102,7 +104,7 @@ export default function GamePage() {
   }
 
   function getImage() {
-    switch (levelParam) {
+    switch (level) {
       case 'Planets':
         return planetsImg;
       case 'Countries':
@@ -116,47 +118,77 @@ export default function GamePage() {
 
   // Make mouse pointer become a circle inside game image
   function mouseEnterHandler() {
-    //The div with the .ringCursor class is styled to make it look like a ring
-    let ringCursor = document.querySelector('.ringCursor');
-    ringCursor.style.display = 'initial';
-    document.getElementById('gameImage').addEventListener('mousemove', (e) => {
+    const ringCursor = document.getElementById('ringCursor');
+    //The div with id=ringCursor is styled to make it look like a ring
+    const gameImage = document.getElementById('gameImage');
+    gameImage.addEventListener('mousemove', (e) => {
       //the top and left style values are updated in response to mouse movements
       ringCursor.style.top = e.pageY + 'px';
       ringCursor.style.left = e.pageX + 'px';
+      ringCursor.style.display = 'initial';
     });
   }
 
   // Make ring cursor disappear outside game image
   function mouseLeaveHandler() {
-    document.querySelector('.ringCursor').style.display = 'none';
+    document.getElementById('ringCursor').style.display = 'none';
   }
 
   function mouseDownHandler() {
-    document.querySelector('.ringCursor').classList.add('clickAnimation');
+    document.getElementById('ringCursor').classList.add('clickAnimation');
   }
 
   function mouseUpHandler() {
-    document.querySelector('.ringCursor').classList.remove('clickAnimation');
+    document.getElementById('ringCursor').classList.remove('clickAnimation');
+  }
+
+  function padTime(val) {
+    let valString = val + '';
+    if (valString.length < 2) {
+      return '0' + valString;
+    } else {
+      return valString;
+    }
+  }
+  function start() {
+    setGameOn(true);
+    let minutesLabel = document.getElementById('minutes');
+    let secondsLabel = document.getElementById('seconds');
+    let totalSeconds = 0;
+    function setTime() {
+      ++totalSeconds;
+      secondsLabel.textContent = padTime(totalSeconds % 60);
+      minutesLabel.textContent = padTime(parseInt(totalSeconds / 60));
+    }
+    setInterval(setTime, 1000); //stop the count using clearInterval()
   }
 
   return (
     <div className='page'>
-      <h2>{levelParam}</h2>
-      <h6>Find: {getObjectivesString()}</h6>
-      <img
-        src={getImage()}
-        alt={levelParam}
-        className='gameImage'
-        id='gameImage'
-        width='1150'
-        onMouseEnter={mouseEnterHandler}
-        onMouseLeave={mouseLeaveHandler}
-        onClick={clickHandler}
-        onMouseDown={mouseDownHandler}
-        onMouseUp={mouseUpHandler}
-      ></img>
+      <h2>{level}</h2>
+      <h5>Find: {getObjectivesString()}</h5>
+      <div id='timer'>
+        <h5 id='minutes'>00</h5>
+        <h5 id='timeDivider'>:</h5>
+        <h5 id='seconds'>00</h5>
+      </div>
+      {gameOn ? (
+        <img
+          src={getImage()}
+          alt={level}
+          id='gameImage'
+          width='1150'
+          onMouseEnter={mouseEnterHandler}
+          onMouseLeave={mouseLeaveHandler}
+          onMouseDown={mouseDownHandler}
+          onMouseUp={mouseUpHandler}
+          onClick={imageClickHandler}
+        />
+      ) : (
+        <button id='startBtn' onClick={start}></button>
+      )}
       <div id='clickedCoordDiv'>Coords</div>
-      <div className='ringCursor'></div>
+      <div id='ringCursor'></div>
     </div>
   );
 }
