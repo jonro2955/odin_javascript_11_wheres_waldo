@@ -1,16 +1,17 @@
 {
   "files": {
-    "main.css": "/odin_javascript_11_wheres_waldo/static/css/main.884313ff.css",
-    "main.js": "/odin_javascript_11_wheres_waldo/static/js/main.dbb7514f.js",
+    "main.css": "/odin_javascript_11_wheres_waldo/static/css/main.f6ce4571.css",
+    "main.js": "/odin_javascript_11_wheres_waldo/static/js/main.a2a9be92.js",
     "static/media/planets.jpg": "/odin_javascript_11_wheres_waldo/static/media/planets.3de8ced99fcc0d527c78.jpg",
     "static/media/games.jpg": "/odin_javascript_11_wheres_waldo/static/media/games.2e7bf1f6ba8dcdc9da55.jpg",
     "static/media/countries.png": "/odin_javascript_11_wheres_waldo/static/media/countries.7bf53cafd4ef84cbeeca.png",
+    "static/media/start.png": "/odin_javascript_11_wheres_waldo/static/media/start.f5bcddf0dec385903c95.png",
     "index.html": "/odin_javascript_11_wheres_waldo/index.html",
-    "main.884313ff.css.map": "/odin_javascript_11_wheres_waldo/static/css/main.884313ff.css.map",
-    "main.dbb7514f.js.map": "/odin_javascript_11_wheres_waldo/static/js/main.dbb7514f.js.map"
+    "main.f6ce4571.css.map": "/odin_javascript_11_wheres_waldo/static/css/main.f6ce4571.css.map",
+    "main.a2a9be92.js.map": "/odin_javascript_11_wheres_waldo/static/js/main.a2a9be92.js.map"
   },
   "entrypoints": [
-    "static/css/main.884313ff.css",
-    "static/js/main.dbb7514f.js"
+    "static/css/main.f6ce4571.css",
+    "static/js/main.a2a9be92.js"
   ]
 }
