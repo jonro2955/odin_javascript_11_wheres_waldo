@@ -6,11 +6,11 @@ import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascr
 export default function LevelTile(props) {
   const image = () => {
     switch (props.levelName) {
-      case 'Planets':
+      case 'planets':
         return planetsImg;
-      case 'Countries':
+      case 'countries':
         return countriesImg;
-      case 'Games':
+      case 'games':
         return gamesImg;
       default:
         return null;
@@ -18,10 +18,10 @@ export default function LevelTile(props) {
   };
 
   return (
-    <div className='GamePathTile'>
-      <h3>{props.levelName}</h3>
+    <div className='LevelTile'>
+      <h3>{props.levelName.toUpperCase()}</h3>
       <Link
-        className='GamePathLink'
+        className='LevelLink'
         to={`/${props.levelName}`}
         style={{
           backgroundImage: `url(${image()})`,

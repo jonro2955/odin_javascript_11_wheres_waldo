@@ -1,14 +1,14 @@
-import LevelTile from '../elements/GamePathTile';
+import LevelTile from '../elements/LevelTile';
 import TopScores from '../elements/TopScores';
 
 export default function HomePage() {
   return (
-    <div className='page'>
-      <h1>Find It! (The Game)</h1>
+    <div id='HomePage' className='page'>
+      <h1>FIND IT! (The Game)</h1>
       <div id='tileBox'>
-        <LevelTile levelName='Planets' />
-        <LevelTile levelName='Countries' />
-        <LevelTile levelName='Games' />
+        <LevelTile levelName='planets' />
+        <LevelTile levelName='countries' />
+        <LevelTile levelName='games' />
       </div>
       <TopScores />
     </div>

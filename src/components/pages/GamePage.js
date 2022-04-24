@@ -7,7 +7,7 @@ import TargetMenu from '../elements/TargetMenu';
 
 export default function GamePage() {
   const level = useParams().level;
-  const isInitialMount = useRef(true); // To run useEffect only on dependency updates
+  const isInitialMount = useRef(true); //for running useEffect on dependency updates only
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
   const [gameOn, setGameOn] = useState(false);
   const [menuOn, setMenuOn] = useState(false);
@@ -21,23 +21,35 @@ export default function GamePage() {
     pixel coordinate does not change with the positioning of the image in the browser window 
     (such as when the dev tools are opened) or the zoom level.
     */
-    Planets: [
-      { name: 'Mercury', x: '822', y: '331' },
-      { name: 'Mars', x: '605', y: '348' },
-      { name: 'Neptune', x: '179', y: '443' },
+    planets: [
+      { name: 'Mercury', x: '822', y: '331', found: false },
+      { name: 'Mars', x: '605', y: '348', found: false },
+      { name: 'Neptune', x: '179', y: '443', found: false },
     ],
-    Countries: [
-      { name: 'Honduras', x: '245', y: '404' },
-      { name: 'Central African Republic', x: '595', y: '435' },
-      { name: 'Bulgaria', x: '607', y: '303' },
+    countries: [
+      { name: 'Honduras', x: '245', y: '404', found: false },
+      { name: 'Central African Republic', x: '595', y: '435', found: false },
+      { name: 'Bulgaria', x: '607', y: '303', found: false },
     ],
-    Games: [
-      { name: "Solid Snake's face", x: '88', y: '314' },
-      { name: "Lara Croft's face", x: '241', y: '383' },
-      { name: "Megaman's face", x: '912', y: '156' },
+    games: [
+      { name: "Solid Snake's face", x: '88', y: '314', found: false },
+      { name: "Lara Croft's face", x: '241', y: '383', found: false },
+      { name: "Megaman's face", x: '912', y: '156', found: false },
     ],
   };
 
+  //gameOn dependent useEffect: Start timer on gameOn and stop timer on unmount
+  useEffect(() => {
+    let counter;
+    if (gameOn) {
+      counter = setInterval(incrementTime, 1000);
+    }
+    return () => {
+      clearTimeout(counter);
+    };
+  }, [gameOn]);
+
+  //clickedCoords dependent useEffect: do not run on initial mount
   useEffect(() => {
     if (!isInitialMount.current) {
       const gameImage = document.getElementById('gameImage');
@@ -46,7 +58,7 @@ export default function GamePage() {
       const clickedCoordDiv = document.getElementById('clickedCoordDiv');
       clickedCoordDiv.textContent = `${coordX}, ${coordY}`;
       switch (level) {
-        case 'Planets':
+        case 'planets':
           if (802 < coordX && coordX < 842 && 311 < coordY && coordY < 351) {
             clickedCoordDiv.textContent = `Mercury`;
           }
@@ -57,7 +69,7 @@ export default function GamePage() {
             clickedCoordDiv.textContent = `Neptune`;
           }
           break;
-        case 'Countries':
+        case 'countries':
           if (230 < coordX && coordX < 260 && 389 < coordY && coordY < 419) {
             clickedCoordDiv.textContent = `Honduras`;
           }
@@ -68,7 +80,7 @@ export default function GamePage() {
             clickedCoordDiv.textContent = `Bulgaria`;
           }
           break;
-        case 'Games':
+        case 'games':
           if (68 < coordX && coordX < 108 && 294 < coordY && coordY < 334) {
             clickedCoordDiv.textContent = `Solid Snake's face`;
           }
@@ -86,26 +98,28 @@ export default function GamePage() {
   }, [clickedCoords]);
 
   function imageClickHandler(e) {
+    //for running useEffect on dependency updates only
     isInitialMount.current = false;
     setClickedCoords({ x: e.pageX, y: e.pageY });
+    //target menu toggle
     menuOn ? setMenuOn(false) : setMenuOn(true);
   }
 
   function getObjectivesString() {
     let array = [];
     switch (level) {
-      case 'Planets':
-        targets['Planets'].forEach((target) => {
+      case 'planets':
+        targets['planets'].forEach((target) => {
           array.push(target['name']);
         });
         break;
-      case 'Countries':
-        targets['Countries'].forEach((target) => {
+      case 'countries':
+        targets['countries'].forEach((target) => {
           array.push(target['name']);
         });
         break;
-      case 'Games':
-        targets['Games'].forEach((target) => {
+      case 'games':
+        targets['games'].forEach((target) => {
           array.push(target['name']);
         });
         break;
@@ -117,31 +131,31 @@ export default function GamePage() {
 
   function getLevelImage() {
     switch (level) {
-      case 'Planets':
+      case 'planets':
         return planetsImg;
-      case 'Countries':
+      case 'countries':
         return countriesImg;
-      case 'Games':
+      case 'games':
         return gamesImg;
       default:
         return null;
     }
   }
 
-  // Make mouse pointer become a circle inside game image
+  // Change mouse pointer inside game image
   function imageMouseEnterHandler() {
-    //The div with id=ringCursor is styled to make it look like a ring
+    //The div with id=ringCursor is styled to make it look special
     const ringCursor = document.getElementById('ringCursor');
     const gameImage = document.getElementById('gameImage');
     gameImage.addEventListener('mousemove', (e) => {
-      //the top and left values are updated in response to mouse movements
+      //top and left values are updated in response to mouse movements
       ringCursor.style.top = e.pageY + 'px';
       ringCursor.style.left = e.pageX + 'px';
       ringCursor.style.display = 'initial';
     });
   }
 
-  // Make ring cursor disappear outside game image
+  // Make special mouse pointer disappear outside game image
   function imageMouseLeaveHandler() {
     document.getElementById('ringCursor').style.display = 'none';
   }
@@ -163,7 +177,7 @@ export default function GamePage() {
     }
   }
 
-  function countTime() {
+  function incrementTime() {
     totalSeconds++;
     document.getElementById('seconds').textContent = paddedTime(
       totalSeconds % 60
@@ -175,18 +189,27 @@ export default function GamePage() {
 
   function start() {
     setGameOn(true);
-    const counter = setInterval(countTime, 1000);
-    //stop the setInterval counter using clearInterval()
-    document.getElementById('endBtn').addEventListener('click', () => {
-      clearTimeout(counter);
-      alert(totalSeconds);
-      //save time in records and run record functions
+    //When End button is clicked, stop the counter using clearInterval(counter)
+    document.querySelectorAll('.dd-list-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        // if all clicked
+        alert(totalSeconds);
+        //save totalSeconds in records and run record functions
+      });
     });
   }
 
+  function menuClickHandler() {
+    let x =
+      clickedCoords['x'] - document.getElementById('gameImage').offsetLeft;
+    let y = clickedCoords['y'] - document.getElementById('gameImage').offsetTop;
+
+    console.log(level, x, y, totalSeconds);
+  }
+
   return (
-    <div className='page'>
-      <h2>{level}</h2>
+    <div id='GamePage' className='page'>
+      <h2>{level.toUpperCase()}</h2>
       <h5>Find: {getObjectivesString()}</h5>
       <div id='timer'>
         <h5 id='minutes'>00</h5>
@@ -211,7 +234,14 @@ export default function GamePage() {
       <div id='clickedCoordDiv'>Coords</div>
       <button id='endBtn'>End</button>
       {menuOn && (
-        <TargetMenu coordX={clickedCoords['x']} coordY={clickedCoords['y']} />
+        <TargetMenu
+          className='dd-list-item'
+          coordX={clickedCoords['x']}
+          coordY={clickedCoords['y']}
+          // menuClickHandler={menuClickHandler}
+          level={level}
+          targets={targets}
+        />
       )}
       <div id='ringCursor'></div>
     </div>
