@@ -12,9 +12,9 @@ export default function GamePage() {
   const [gameOn, setGameOn] = useState(false);
   const [menuOn, setMenuOn] = useState(false);
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
-  const [userSelection, setUserSelection] = useState();
+  const [userSelection, setUserSelection] = useState('');
   const [targets, setTargets] = useState(targetData);
-  const [seconds, setSeconds] = useState(0);
+  const [time, setTime] = useState(0);
   let totalSeconds = 0;
 
   //[userSelection]
@@ -27,7 +27,7 @@ export default function GamePage() {
       //if result, then user has clicked a target area and selected the correct menu option for it
       if (result) {
         console.log(result);
-        //disable the found option
+        //disable the menu item once found
         let tmp = targets;
         tmp[level].forEach((levelTarget) => {
           if (levelTarget['name'] === result) {
@@ -35,11 +35,43 @@ export default function GamePage() {
           }
         });
         setTargets(tmp);
+
+        /**
+         * Next:
+         * -notification of found target with animation
+         * -update the target list and/or notify what items are left
+         * -allLevelTargetsFound(level, tmp) tests if all level objectives
+         *  are found, so if it returns true, save the time and do stuff
+         *  in the back end
+         */
+        console.log('All found: ', allLevelTargetsFound(level, tmp));
       }
     }
     //reset userSelection to force user to select the correct item from the menu each time
     setUserSelection('');
   }, [clickedCoords, userSelection]);
+
+  //[gameOn] starts the internal timer
+  useEffect(() => {
+    let interval;
+    if (gameOn) {
+      interval = setInterval(incrementTime, 1000);
+    } else {
+      clearInterval(interval);
+    }
+    // stop timer on unmount
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameOn]);
+
+  //[time] updates the time display
+  useEffect(() => {
+    document.getElementById('time').textContent = paddedTime(time % 60);
+    document.getElementById('minutes').textContent = paddedTime(
+      parseInt(time / 60)
+    );
+  }, [time]);
 
   function imageClickHandler(e) {
     //toggle menu
@@ -61,31 +93,9 @@ export default function GamePage() {
     setUserSelection(e.target.textContent);
   }
 
-  //[gameOn] starts the internal timer
-  useEffect(() => {
-    let interval;
-    if (gameOn) {
-      interval = setInterval(incrementTime, 1000);
-    } else {
-      clearInterval(interval);
-    }
-    // stop timer on unmount
-    return () => {
-      clearInterval(interval);
-    };
-  }, [gameOn]);
-
-  //[seconds] updates the time display
-  useEffect(() => {
-    document.getElementById('seconds').textContent = paddedTime(seconds % 60);
-    document.getElementById('minutes').textContent = paddedTime(
-      parseInt(seconds / 60)
-    );
-  }, [seconds]);
-
   function incrementTime() {
     totalSeconds++;
-    setSeconds(totalSeconds);
+    setTime(totalSeconds);
   }
 
   function paddedTime(time) {
@@ -97,7 +107,13 @@ export default function GamePage() {
     }
   }
 
-  function getObjectivesString() {
+  function allLevelTargetsFound(level, targets) {
+    return targets[level].every((obj) => {
+      return obj['found'] === true;
+    });
+  }
+
+  function getObjectivesString(level, targets) {
     let array = [];
     targets[level].forEach((target) => {
       array.push(target['name']);
@@ -105,7 +121,7 @@ export default function GamePage() {
     return array.join(', ');
   }
 
-  function getLevelImage() {
+  function getLevelImage(level) {
     switch (level) {
       case 'planets':
         return planetsImg;
@@ -152,15 +168,15 @@ export default function GamePage() {
   return (
     <div id='GamePage' className='page'>
       <h2>{level.toUpperCase()}</h2>
-      <h5>Find: {getObjectivesString()}</h5>
+      <h5>Find: {getObjectivesString(level, targets)}</h5>
       <div id='timer'>
         <h5 id='minutes'>00</h5>
         <h5>:</h5>
-        <h5 id='seconds'>00</h5>
+        <h5 id='time'>00</h5>
       </div>
       {gameOn ? (
         <img
-          src={getLevelImage()}
+          src={getLevelImage(level)}
           alt={level}
           id='gameImage'
           width='1150'
@@ -173,7 +189,6 @@ export default function GamePage() {
       ) : (
         <button id='startBtn' onClick={start}></button>
       )}
-      <button id='endBtn'>End</button>
       {menuOn && (
         <TargetMenu
           className='dd-list-item'
