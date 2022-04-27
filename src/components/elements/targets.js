@@ -98,7 +98,7 @@ export function attemptResult(level, clickedX, clickedY, menuSelection) {
         clickedX < 261 &&
         363 < clickedY &&
         clickedY < 403 &&
-        menuSelection === `Mercury`
+        menuSelection === `Lara Croft's face`
       ) {
         return menuSelection;
       }
@@ -107,7 +107,7 @@ export function attemptResult(level, clickedX, clickedY, menuSelection) {
         clickedX < 932 &&
         136 < clickedY &&
         clickedY < 176 &&
-        menuSelection === `Mercury`
+        menuSelection === `Megaman's face`
       ) {
         return menuSelection;
       }

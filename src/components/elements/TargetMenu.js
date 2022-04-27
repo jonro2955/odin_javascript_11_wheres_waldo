@@ -12,13 +12,19 @@ export default function TargetMenu(props) {
   return (
     <div id='TargetMenu' style={style}>
       {!target0Found && (
-        <button onClick={props.menuClickHandler}>{target0}</button>
+        <button className='menuBtn' onClick={props.menuClickHandler}>
+          {target0}
+        </button>
       )}
       {!target1Found && (
-        <button onClick={props.menuClickHandler}>{target1}</button>
+        <button className='menuBtn' onClick={props.menuClickHandler}>
+          {target1}
+        </button>
       )}
       {!target2Found && (
-        <button onClick={props.menuClickHandler}>{target2}</button>
+        <button className='menuBtn' onClick={props.menuClickHandler}>
+          {target2}
+        </button>
       )}
     </div>
   );

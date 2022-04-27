@@ -5,11 +5,31 @@ import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_jav
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
 import TargetMenu from '../elements/TargetMenu';
 import { targetData, attemptResult } from '../elements/targets';
+import M from 'materialize-css';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+  doc,
+  serverTimestamp,
+} from 'firebase/firestore';
+
+import { initializeApp } from 'firebase/app';
+import { getFirebaseConfig } from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/firebaseConfig.js'; 
+const firebaseAppConfig = getFirebaseConfig();
+initializeApp(firebaseAppConfig);
 
 export default function GamePage() {
   const level = useParams().level;
   const isInitialMount = useRef(true); //for running useEffect on dependency updates only
   const [gameOn, setGameOn] = useState(false);
+  const [timerOn, setTimerOn] = useState(false);
   const [menuOn, setMenuOn] = useState(false);
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
   const [userSelection, setUserSelection] = useState('');
@@ -17,7 +37,19 @@ export default function GamePage() {
   const [time, setTime] = useState(0);
   let totalSeconds = 0;
 
-  //[userSelection]
+  // Saves a new time on the Cloud Firestore.
+  async function saveTime(timeValue) {
+    try {
+      await addDoc(collection(getFirestore(), 'records'), {
+        name: '1',
+        time: timeValue,
+      });
+    } catch (error) {
+      console.error('Error writing new message to Firebase Database', error);
+    }
+  }
+
+  //[clickedCoords, userSelection]
   useEffect(() => {
     if (!isInitialMount.current) {
       const gameImage = document.getElementById('gameImage');
@@ -26,8 +58,8 @@ export default function GamePage() {
       let result = attemptResult(level, clickedX, clickedY, userSelection);
       //if result, then user has clicked a target area and selected the correct menu option for it
       if (result) {
-        console.log(result);
-        //disable the menu item once found
+        toast(`${result} found!!!`);
+        //set item as found in targets
         let tmp = targets;
         tmp[level].forEach((levelTarget) => {
           if (levelTarget['name'] === result) {
@@ -35,26 +67,24 @@ export default function GamePage() {
           }
         });
         setTargets(tmp);
-
-        /**
-         * Next:
-         * -notification of found target with animation
-         * -update the target list and/or notify what items are left
-         * -allLevelTargetsFound(level, tmp) tests if all level objectives
-         *  are found, so if it returns true, save the time and do stuff
-         *  in the back end
-         */
-        console.log('All found: ', allLevelTargetsFound(level, tmp));
+        /*************************************************************
+         *if all targets found, do stuff in the backend with the time
+         ************************************************************/
+        if (allLevelTargetsFound(level, tmp)) {
+          toast(`All found in ${time} seconds`);
+          setTimerOn(false);
+          saveTime(time);
+        }
       }
     }
-    //reset userSelection to force user to select the correct item from the menu each time
+    //reset userSelection to force user to select the correct item each time
     setUserSelection('');
   }, [clickedCoords, userSelection]);
 
-  //[gameOn] starts the internal timer
+  //[timerOn] start the internal timer
   useEffect(() => {
     let interval;
-    if (gameOn) {
+    if (timerOn) {
       interval = setInterval(incrementTime, 1000);
     } else {
       clearInterval(interval);
@@ -63,9 +93,9 @@ export default function GamePage() {
     return () => {
       clearInterval(interval);
     };
-  }, [gameOn]);
+  }, [timerOn]);
 
-  //[time] updates the time display
+  //[time] update time display
   useEffect(() => {
     document.getElementById('time').textContent = paddedTime(time % 60);
     document.getElementById('minutes').textContent = paddedTime(
@@ -73,23 +103,32 @@ export default function GamePage() {
     );
   }, [time]);
 
+  function toast(msg) {
+    M.toast({
+      html: msg,
+      inDuration: 300,
+      outDuration: 375,
+      displyLength: 4000,
+      classes: 'rounded',
+      completeCallback: () => {
+        console.log(msg);
+      },
+    });
+  }
+
   function imageClickHandler(e) {
     //toggle menu
     menuOn ? setMenuOn(false) : setMenuOn(true);
-    //for running useEffect on dependency updates only
+    //Make useEffect run on updates only
     isInitialMount.current = false;
-    //update the coords portion of userSelection
-    // let tmp = userSelection;
-    // tmp['coords'] = { x: e.pageX, y: e.pageY };
+    //save clicked coords
     setClickedCoords({ x: e.pageX, y: e.pageY });
   }
 
   function menuClickHandler(e) {
     //menu off
     setMenuOn(false);
-    //update the menuSelection portion of userSelection
-    // let tmp = userSelection;
-    // tmp['menuSelection'] = e.target.textContent;
+    //save menu selection
     setUserSelection(e.target.textContent);
   }
 
@@ -162,13 +201,38 @@ export default function GamePage() {
 
   function start() {
     setGameOn(true);
+    setTimerOn(true);
+    setMenuOn(false);
     isInitialMount.current = false;
+  }
+
+  function reset() {
+    isInitialMount.current = true;
+    totalSeconds = 0;
+    setTime(0);
+    setTimerOn(false);
+    setGameOn(false);
+    setMenuOn(false);
+    let tmp = targets;
+    tmp[level].forEach((levelTarget) => {
+      levelTarget['found'] = false;
+    });
+    setTargets(tmp);
   }
 
   return (
     <div id='GamePage' className='page'>
-      <h2>{level.toUpperCase()}</h2>
-      <h5>Find: {getObjectivesString(level, targets)}</h5>
+      <nav className='nav-wrapper purple accent-3 valign-wrapper'>
+        <div className='brand-logo center'>{level.toUpperCase()}</div>
+        <button
+          className='waves-effect green accent-2 btn right-align'
+          id='reset'
+          onClick={reset}
+        >
+          reset
+        </button>
+      </nav>
+      <h5 id='headline'>Find: {getObjectivesString(level, targets)}</h5>
       <div id='timer'>
         <h5 id='minutes'>00</h5>
         <h5>:</h5>
