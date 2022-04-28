@@ -1,5 +1,5 @@
-import LevelTile from '../elements/LevelTile';
-import TopScores from '../elements/TopScores';
+import LevelTile from '../LevelTile';
+import TopScores from '../TopScores';
 
 export default function HomePage() {
   return (

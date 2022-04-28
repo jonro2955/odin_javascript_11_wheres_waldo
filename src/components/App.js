@@ -1,8 +1,8 @@
 //Must run 'npm i react-router-dom' before you can use router:
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './components/pages/HomePage.js';
-import GamePage from './components/pages/GamePage.js';
-import RecordsPage from './components/pages/RecordsPage.js';
+import HomePage from './pages/HomePage.js';
+import GamePage from './pages/GamePage.js';
+import RecordsPage from './pages/RecordsPage.js';
 
 export default function App() {
   return (

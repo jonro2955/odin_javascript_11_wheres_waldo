@@ -103,3 +103,7 @@
   padding: 5px;
   border-radius: 10px;
 }
+#EntryForm {
+  position: absolute;
+  top: 50%;
+}

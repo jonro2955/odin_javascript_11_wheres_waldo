@@ -1,11 +1,15 @@
+//node package imports
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
+import M from 'materialize-css';
+//image imports
 import planetsImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/planets.jpg';
 import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/countries.png';
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
-import TargetMenu from '../elements/TargetMenu';
-import { targetData, attemptResult } from '../elements/targets';
-import M from 'materialize-css';
+//my own component imports
+import TargetMenu from '../TargetMenu';
+import { targetData, attemptResult } from '../targets.js';
+//firebase imports
 import {
   getFirestore,
   collection,
@@ -19,12 +23,13 @@ import {
   doc,
   serverTimestamp,
 } from 'firebase/firestore';
-
 import { initializeApp } from 'firebase/app';
-import { getFirebaseConfig } from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/firebaseConfig.js'; 
+import { getFirebaseConfig } from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/firebaseConfig.js';
+//initialize firebase
 const firebaseAppConfig = getFirebaseConfig();
 initializeApp(firebaseAppConfig);
 
+//Default export component: <GamePage/>
 export default function GamePage() {
   const level = useParams().level;
   const isInitialMount = useRef(true); //for running useEffect on dependency updates only
@@ -32,56 +37,11 @@ export default function GamePage() {
   const [timerOn, setTimerOn] = useState(false);
   const [menuOn, setMenuOn] = useState(false);
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
-  const [userSelection, setUserSelection] = useState('');
   const [targets, setTargets] = useState(targetData);
-  const [time, setTime] = useState(0);
-  let totalSeconds = 0;
+  const [seconds, setSeconds] = useState(0);
+  let secondsCounter = 0;
 
-  // Saves a new time on the Cloud Firestore.
-  async function saveTime(timeValue) {
-    try {
-      await addDoc(collection(getFirestore(), 'records'), {
-        name: '1',
-        time: timeValue,
-      });
-    } catch (error) {
-      console.error('Error writing new message to Firebase Database', error);
-    }
-  }
-
-  //[clickedCoords, userSelection]
-  useEffect(() => {
-    if (!isInitialMount.current) {
-      const gameImage = document.getElementById('gameImage');
-      let clickedX = clickedCoords['x'] - gameImage.offsetLeft;
-      let clickedY = clickedCoords['y'] - gameImage.offsetTop;
-      let result = attemptResult(level, clickedX, clickedY, userSelection);
-      //if result, then user has clicked a target area and selected the correct menu option for it
-      if (result) {
-        toast(`${result} found!!!`);
-        //set item as found in targets
-        let tmp = targets;
-        tmp[level].forEach((levelTarget) => {
-          if (levelTarget['name'] === result) {
-            levelTarget['found'] = true;
-          }
-        });
-        setTargets(tmp);
-        /*************************************************************
-         *if all targets found, do stuff in the backend with the time
-         ************************************************************/
-        if (allLevelTargetsFound(level, tmp)) {
-          toast(`All found in ${time} seconds`);
-          setTimerOn(false);
-          saveTime(time);
-        }
-      }
-    }
-    //reset userSelection to force user to select the correct item each time
-    setUserSelection('');
-  }, [clickedCoords, userSelection]);
-
-  //[timerOn] start the internal timer
+  //[timerOn]
   useEffect(() => {
     let interval;
     if (timerOn) {
@@ -95,20 +55,41 @@ export default function GamePage() {
     };
   }, [timerOn]);
 
-  //[time] update time display
+  //[seconds]
   useEffect(() => {
-    document.getElementById('time').textContent = paddedTime(time % 60);
+    document.getElementById('seconds').textContent = paddedTime(seconds % 60);
     document.getElementById('minutes').textContent = paddedTime(
-      parseInt(time / 60)
+      parseInt(seconds / 60)
     );
-  }, [time]);
+  }, [seconds]);
 
+  // Save a new entry to Cloud Firestore.
+  async function saveTimeToCloud() {
+    let name = document.getElementById('fname').value;
+    if (name.length > 0) {
+      try {
+        await addDoc(collection(getFirestore(), 'data'), {
+          name: name,
+          level: level,
+          seconds: seconds,
+          time: Date.now(),
+        });
+        console.log('writing to cloud');
+      } catch (error) {
+        console.error('Error writing new message to Firebase Database', error);
+      }
+    } else {
+      alert('no name');
+    }
+  }
+
+  //M.toast() is materialize js library's popup modal
   function toast(msg) {
     M.toast({
       html: msg,
       inDuration: 300,
       outDuration: 375,
-      displyLength: 4000,
+      displyLength: 3000,
       classes: 'rounded',
       completeCallback: () => {
         console.log(msg);
@@ -126,19 +107,49 @@ export default function GamePage() {
   }
 
   function menuClickHandler(e) {
-    //menu off
+    //toggle menu off
     setMenuOn(false);
-    //save menu selection
-    setUserSelection(e.target.textContent);
+    //test selection and coodinates using attemptResult()
+    if (!isInitialMount.current) {
+      const gameImage = document.getElementById('gameImage');
+      let clickedX = clickedCoords['x'] - gameImage.offsetLeft;
+      let clickedY = clickedCoords['y'] - gameImage.offsetTop;
+      let selection = e.target.textContent;
+      let result = attemptResult(level, clickedX, clickedY, selection);
+      //if result, then user selected correct coordinates and menu item
+      if (result) {
+        toast(`${result} found!!!`);
+        //mark item as found in targets
+        let tmp = targets;
+        tmp[level].forEach((levelTarget) => {
+          if (levelTarget['name'] === result) {
+            levelTarget['found'] = true;
+          }
+        });
+        setTargets(tmp);
+        /*************************************************************
+         *if all targets found, do stuff in the backend with the seconds
+         ************************************************************/
+        if (allLevelTargetsFound(level, tmp)) {
+          toast(`All found in ${seconds} seconds`);
+          setTimerOn(false);
+          openEntryForm();
+        }
+        //else: missed. Reset user click
+      } else {
+        toast('Missed!');
+        setClickedCoords('');
+      }
+    }
   }
 
   function incrementTime() {
-    totalSeconds++;
-    setTime(totalSeconds);
+    secondsCounter++;
+    setSeconds(secondsCounter);
   }
 
-  function paddedTime(time) {
-    let valString = time + '';
+  function paddedTime(seconds) {
+    let valString = seconds + '';
     if (valString.length < 2) {
       return '0' + valString;
     } else {
@@ -199,6 +210,17 @@ export default function GamePage() {
     document.getElementById('ringCursor').classList.remove('clickAnimation');
   }
 
+  function openEntryForm() {
+    let elem = document.getElementById('modal1');
+    var modal = M.Modal.init(elem, { dismissible: false });
+    modal.open();
+  }
+  function closeEntryForm() {
+    let elem = document.getElementById('modal1');
+    var modal = M.Modal.init(elem, { dismissible: false });
+    modal.close();
+  }
+
   function start() {
     setGameOn(true);
     setTimerOn(true);
@@ -206,10 +228,10 @@ export default function GamePage() {
     isInitialMount.current = false;
   }
 
-  function reset() {
+  function restart() {
     isInitialMount.current = true;
-    totalSeconds = 0;
-    setTime(0);
+    secondsCounter = 0;
+    setSeconds(0);
     setTimerOn(false);
     setGameOn(false);
     setMenuOn(false);
@@ -218,6 +240,7 @@ export default function GamePage() {
       levelTarget['found'] = false;
     });
     setTargets(tmp);
+    closeEntryForm();
   }
 
   return (
@@ -226,17 +249,17 @@ export default function GamePage() {
         <div className='brand-logo center'>{level.toUpperCase()}</div>
         <button
           className='waves-effect green accent-2 btn right-align'
-          id='reset'
-          onClick={reset}
+          id='restart'
+          onClick={restart}
         >
-          reset
+          Restart
         </button>
       </nav>
       <h5 id='headline'>Find: {getObjectivesString(level, targets)}</h5>
       <div id='timer'>
         <h5 id='minutes'>00</h5>
         <h5>:</h5>
-        <h5 id='time'>00</h5>
+        <h5 id='seconds'>00</h5>
       </div>
       {gameOn ? (
         <img
@@ -255,7 +278,6 @@ export default function GamePage() {
       )}
       {menuOn && (
         <TargetMenu
-          className='dd-list-item'
           clickedX={clickedCoords['x']}
           clickedY={clickedCoords['y']}
           menuClickHandler={menuClickHandler}
@@ -263,6 +285,29 @@ export default function GamePage() {
           targets={targets}
         />
       )}
+      {/* Name entry form modal */}
+      <div id='modal1' className='modal'>
+        <div className='modal-content'>
+          <h4>Your time was {seconds} seconds</h4>
+          <label htmlFor='fname'>Please enter your name:</label>
+          <input type='text' id='fname' name='fname'></input>
+        </div>
+        <div className='modal-footer'>
+          <a
+            onClick={restart}
+            className='modal-close waves-effect waves-green btn-flat'
+          >
+            Restart
+          </a>
+          <a
+            onClick={saveTimeToCloud}
+            className='modal-close waves-effect waves-green btn-flat'
+          >
+            Submit
+          </a>
+        </div>
+      </div>
+
       <div id='ringCursor'></div>
     </div>
   );
