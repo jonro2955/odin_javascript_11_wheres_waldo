@@ -23,7 +23,6 @@ export default function GamePage() {
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
   const [targets, setTargets] = useState(targetData);
   const [seconds, setSeconds] = useState(0);
-  const [records, setRecords] = useState([]);
   let secondsCounter = 0;
 
   //[timerOn]
@@ -51,7 +50,7 @@ export default function GamePage() {
     );
   }, [seconds]);
 
-  // Save a new records entry to Cloud Firestore.
+  // Save a new name entry to Firestore.
   async function saveNameToCloud() {
     let name = document.getElementById('playerName').value;
     if (name.length > 0) {
@@ -71,7 +70,7 @@ export default function GamePage() {
     }
   }
 
-  //M.toast() is materialize library's popup notification modal
+  //M.toast() is materialize-css library's popup notification modal
   function toast(msg) {
     M.toast({
       html: msg,
@@ -191,6 +190,7 @@ export default function GamePage() {
     var modal = M.Modal.init(elem, { dismissible: false });
     modal.open();
   }
+
   function closeEntryForm() {
     let elem = document.getElementById('nameEntryModal');
     var modal = M.Modal.init(elem, { dismissible: false });
@@ -252,7 +252,7 @@ export default function GamePage() {
       ) : (
         <button id='startBtn' onClick={start}></button>
       )}
-      <Records records={records} level={level} />
+      <Records context={level} />
       {menuOn && (
         <TargetMenu
           clickedX={clickedCoords['x']}

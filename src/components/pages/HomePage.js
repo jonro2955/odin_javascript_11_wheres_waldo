@@ -1,6 +1,6 @@
 import LevelTile from '../LevelTile';
 import Records from '../Records';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getFirestore,
   collection,
@@ -18,28 +18,33 @@ initializeApp(firebaseAppConfig);
 export default function HomePage() {
   const [records, setRecords] = useState([]);
 
-  async function a() {
+  async function getDocsRead() {
     let array = [];
-    const q = query(collection(getFirestore(), 'records'), orderBy('seconds'));
+    const q = query(collection(getFirestore(), 'data'), orderBy('seconds'));
     const snapshot = await getDocs(q);
     snapshot.forEach((doc) => {
-      array.push(doc.records());
+      array.push(doc.data());
     });
     setRecords(array);
+    console.log('home(a)');
   }
 
-  async function b() {
+  async function onSnapRead() {
     const array = [];
-    const q = query(collection(getFirestore(), 'records'), orderBy('seconds'));
+    const q = query(collection(getFirestore(), 'data'), orderBy('seconds'));
     onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        array.push(doc.records());
+        array.push(doc.data());
       });
       setRecords(array);
+      console.log('home(b)');
     });
   }
 
-  a();
+  useEffect(() => {
+    // getDocsRead();
+    // onSnapRead();
+  }, []);
 
   return (
     <div id='HomePage' className='page'>
@@ -51,7 +56,7 @@ export default function HomePage() {
         <LevelTile levelName='countries' />
         <LevelTile levelName='games' />
       </div>
-      <Records records={records} level='homepage'/>
+      <Records context='home'/>
     </div>
   );
 }
