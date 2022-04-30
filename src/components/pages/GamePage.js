@@ -23,6 +23,7 @@ export default function GamePage() {
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
   const [targets, setTargets] = useState(targetData);
   const [seconds, setSeconds] = useState(0);
+  const [latestEntryNum, setLatestEntryNum] = useState();
   let secondsCounter = 0;
 
   //[timerOn]
@@ -62,6 +63,7 @@ export default function GamePage() {
           time: Date.now(),
         });
         console.log('writing to cloud');
+        setLatestEntryNum(Date.now());
       } catch (error) {
         console.error('Error writing new message to Firebase Database', error);
       }
@@ -252,7 +254,7 @@ export default function GamePage() {
       ) : (
         <button id='startBtn' onClick={start}></button>
       )}
-      <Records context={level} />
+      <Records context={level} latestEntryNum={latestEntryNum} />
       {menuOn && (
         <TargetMenu
           clickedX={clickedCoords['x']}

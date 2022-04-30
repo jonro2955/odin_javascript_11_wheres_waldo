@@ -10,6 +10,7 @@ import {
 
 export default function Records(props) {
   const [context] = useState(props.context);
+  const [latestEntryNum, setLatestEntryNum] = useState(props.latestEntryNum);
   const [records, setRecords] = useState([]);
 
   async function getDocsRead() {
@@ -38,7 +39,7 @@ export default function Records(props) {
   useEffect(() => {
     // getDocsRead();
     onSnapRead();
-  }, []);
+  }, [latestEntryNum]);
 
   return (
     <div id='TopScores'>
