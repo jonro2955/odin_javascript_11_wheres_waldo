@@ -34,7 +34,6 @@ export default function GamePage() {
         setSeconds(secondsCounter);
       }, 1000);
     } else {
-      toast('Timer off!');
       clearInterval(interval);
     }
     // stop timer on unmount
