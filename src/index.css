@@ -119,3 +119,11 @@
 .recordEntryFieldData {
   background-color: chartreuse;
 }
+#recordsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+#Records{
+  background-color:plum;
+}

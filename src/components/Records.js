@@ -19,7 +19,7 @@ export default function Records(props) {
       querySnapshot.forEach((doc) => {
         array.push(doc.data());
       });
-      // If a level prop is provided for use in <TopScoresPage/>
+      // If a level prop is provided, only return level-specific records 
       if (level) {
         setRecords(
           array.slice(0, limit).map((item, index) => {
@@ -39,7 +39,7 @@ export default function Records(props) {
               );
           })
         );
-        // If a level prop is not provided for use in <HomePage/>
+        // If a level prop is not provided return all records
       } else {
         setRecords(
           array.slice(0, limit).map((item, index) => {
@@ -75,7 +75,7 @@ export default function Records(props) {
 
   return (
     <div id='Records'>
-      <h3>{level ? level.toUpperCase() : ''}</h3>
+      <h3>{level ? level.toUpperCase() +' RECORDS' : ''}</h3>
       <div>{records}</div>
     </div>
   );

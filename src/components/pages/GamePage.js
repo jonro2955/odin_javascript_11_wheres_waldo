@@ -8,6 +8,7 @@ import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_jav
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
 //my own components
 import Nav from '../Nav';
+import Records from '../Records';
 import TargetMenu from '../TargetMenu';
 import { targetData, attemptResult } from '../targets.js';
 //firebase imports
@@ -61,7 +62,7 @@ export default function GamePage() {
           seconds: seconds,
           time: Date.now(),
         });
-        console.log('writing to cloud');
+        toast('Data entered');
       } catch (error) {
         console.error('Error writing new message to Firebase Database', error);
       }
