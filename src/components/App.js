@@ -2,7 +2,7 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage.js';
 import GamePage from './pages/GamePage.js';
-import RecordsPage from './pages/RecordsPage.js';
+import TopScoresPage from './pages/TopScoresPage.js';
 
 export default function App() {
   return (
@@ -14,7 +14,7 @@ export default function App() {
         route, and the linked element (in this case <GamePage/>) will have 
         access to the "to" parameter as "useParams().level" */}
         <Route path='/:level' element={<GamePage />} />
-        <Route path='/records' element={<RecordsPage />} />
+        <Route path='/records' element={<TopScoresPage />} />
         <Route path='/' element={<HomePage />} />
       </Routes>
     </HashRouter>

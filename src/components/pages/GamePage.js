@@ -7,8 +7,8 @@ import planetsImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javas
 import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/countries.png';
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
 //my own components
+import Nav from '../Nav';
 import TargetMenu from '../TargetMenu';
-import Records from '../Records';
 import { targetData, attemptResult } from '../targets.js';
 //firebase imports
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
@@ -16,25 +16,25 @@ import { getFirestore, collection, addDoc } from 'firebase/firestore';
 //Default export component: <GamePage/>
 export default function GamePage() {
   const level = useParams().level;
-  const isInitialMount = useRef(true); //for running useEffect on dependency updates only
   const [gameOn, setGameOn] = useState(false);
   const [timerOn, setTimerOn] = useState(false);
   const [menuOn, setMenuOn] = useState(false);
   const [clickedCoords, setClickedCoords] = useState({ x: '', y: '' });
   const [targets, setTargets] = useState(targetData);
   const [seconds, setSeconds] = useState(0);
-  const [latestEntryNum, setLatestEntryNum] = useState();
   let secondsCounter = 0;
 
   //[timerOn]
   useEffect(() => {
     let interval;
     if (timerOn) {
+      toast('Timer on!');
       interval = setInterval(() => {
         secondsCounter++;
         setSeconds(secondsCounter);
       }, 1000);
     } else {
+      toast('Timer off!');
       clearInterval(interval);
     }
     // stop timer on unmount
@@ -63,12 +63,11 @@ export default function GamePage() {
           time: Date.now(),
         });
         console.log('writing to cloud');
-        setLatestEntryNum(Date.now());
       } catch (error) {
         console.error('Error writing new message to Firebase Database', error);
       }
     } else {
-      alert('No name entered. Save cancelled.');
+      alert('Save cancelled.');
     }
   }
 
@@ -89,8 +88,6 @@ export default function GamePage() {
   function imageClickHandler(e) {
     //toggle menu
     menuOn ? setMenuOn(false) : setMenuOn(true);
-    //Make useEffect run on updates only
-    isInitialMount.current = false;
     //set clickedCoords state
     setClickedCoords({ x: e.pageX, y: e.pageY });
   }
@@ -203,11 +200,9 @@ export default function GamePage() {
     setGameOn(true);
     setTimerOn(true);
     setMenuOn(false);
-    isInitialMount.current = false;
   }
 
   function restart() {
-    isInitialMount.current = true;
     secondsCounter = 0;
     setSeconds(0);
     setTimerOn(false);
@@ -223,38 +218,38 @@ export default function GamePage() {
 
   return (
     <div id='GamePage' className='page'>
-      <nav className='nav-wrapper purple accent-3 valign-wrapper'>
-        <div className='brand-logo center'>{level.toUpperCase()}</div>
-        <button
-          className='waves-effect green accent-2 btn right-align'
-          id='restart'
-          onClick={restart}
-        >
-          Restart
-        </button>
-      </nav>
+      <Nav headline={level.toUpperCase()} />
       <h5 id='headline'>Find: {getObjectivesString(level, targets)}</h5>
-      <div id='timer'>
+      <div id='timer' className='valign-wrapper'>
         <h5 id='minutes'>00</h5>
         <h5>:</h5>
         <h5 id='seconds'>00</h5>
       </div>
+
       {gameOn ? (
-        <img
-          src={getLevelImage(level)}
-          alt={level}
-          id='gameImage'
-          width='1150'
-          onMouseEnter={imageMouseEnterHandler}
-          onMouseLeave={imageMouseLeaveHandler}
-          onMouseDown={imageMouseDownHandler}
-          onMouseUp={imageMouseUpHandler}
-          onClick={imageClickHandler}
-        />
+        <>
+          <button
+            className='waves-effect green accent-2 btn'
+            id='restart'
+            onClick={restart}
+          >
+            Restart
+          </button>
+          <img
+            src={getLevelImage(level)}
+            alt={level}
+            id='gameImage'
+            width='1150'
+            onMouseEnter={imageMouseEnterHandler}
+            onMouseLeave={imageMouseLeaveHandler}
+            onMouseDown={imageMouseDownHandler}
+            onMouseUp={imageMouseUpHandler}
+            onClick={imageClickHandler}
+          />
+        </>
       ) : (
         <button id='startBtn' onClick={start}></button>
       )}
-      <Records context={level} latestEntryNum={latestEntryNum} />
       {menuOn && (
         <TargetMenu
           clickedX={clickedCoords['x']}
@@ -269,7 +264,12 @@ export default function GamePage() {
         <div className='modal-content'>
           <h4>Your time was {seconds} seconds</h4>
           <label htmlFor='playerName'>Please enter your name:</label>
-          <input type='text' id='playerName' name='playerName'></input>
+          <input
+            type='text'
+            maxLength='50'
+            id='playerName'
+            name='playerName'
+          ></input>
         </div>
         <div className='modal-footer'>
           <button

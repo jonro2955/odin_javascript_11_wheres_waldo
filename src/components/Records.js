@@ -3,26 +3,14 @@ import {
   getFirestore,
   collection,
   query,
-  getDocs,
   orderBy,
   onSnapshot,
 } from 'firebase/firestore';
 
 export default function Records(props) {
-  const [context] = useState(props.context);
-  const [latestEntryNum, setLatestEntryNum] = useState(props.latestEntryNum);
   const [records, setRecords] = useState([]);
-
-  async function getDocsRead() {
-    let array = [];
-    const q = query(collection(getFirestore(), 'data'), orderBy('seconds'));
-    const snapshot = await getDocs(q);
-    snapshot.forEach((doc) => {
-      array.push(doc.data());
-    });
-    setRecords(array);
-    console.log('home(a)');
-  }
+  const [limit] = useState(props.limit ? props.limit : 100);
+  const [level] = useState(props.level);
 
   async function onSnapRead() {
     const array = [];
@@ -31,37 +19,64 @@ export default function Records(props) {
       querySnapshot.forEach((doc) => {
         array.push(doc.data());
       });
-      setRecords(array);
-      console.log('home(b)');
+      // If a level prop is provided for use in <TopScoresPage/>
+      if (level) {
+        setRecords(
+          array.slice(0, limit).map((item, index) => {
+            if (level && item.level === level)
+              return (
+                <div key={index}>
+                  <span className='recordEntryFieldLabel'>Time:</span>&nbsp;
+                  <span className='recordEntryFieldData'>
+                    {item.seconds} seconds
+                  </span>
+                  &nbsp;
+                  <span className='recordEntryFieldLabel'>Name:</span>&nbsp;
+                  <span className='recordEntryFieldData'>
+                    {item.name.toUpperCase()}
+                  </span>
+                </div>
+              );
+          })
+        );
+        // If a level prop is not provided for use in <HomePage/>
+      } else {
+        setRecords(
+          array.slice(0, limit).map((item, index) => {
+            return (
+              <div key={index}>
+                <span className='recordEntryNum'>{index + 1})</span>&nbsp;
+                <span className='recordEntryFieldLabel'>Name:</span>&nbsp;
+                <span className='recordEntryFieldData'>
+                  {item.name.toUpperCase()}
+                </span>
+                &nbsp;
+                <span className='recordEntryFieldLabel'>Time:</span>&nbsp;
+                <span className='recordEntryFieldData'>
+                  {item.seconds} seconds
+                </span>
+                &nbsp;
+                <span className='recordEntryFieldLabel'>Level:</span>&nbsp;
+                <span className='recordEntryFieldData'>
+                  {item.level.toUpperCase()}
+                </span>
+                &nbsp;
+              </div>
+            );
+          })
+        );
+      }
     });
   }
 
   useEffect(() => {
-    // getDocsRead();
     onSnapRead();
-  }, [latestEntryNum]);
+  }, []);
 
   return (
-    <div id='TopScores'>
-      <h5>Top Scores</h5>
-      {context === 'home'
-        ? records.map((item, index) => {
-            return (
-              <div key={index}>
-                {index + 1}) {item.name}: {item.seconds} seconds ({item.level})
-              </div>
-            );
-          })
-        : records.map((item, index) => {
-            if (item.level === context) {
-              return (
-                <div key={index}>
-                  {index + 1}) {item.name}: {item.seconds} seconds ({item.level}
-                  )
-                </div>
-              );
-            }
-          })}
+    <div id='Records'>
+      <h3>{level ? level.toUpperCase() : ''}</h3>
+      <div>{records}</div>
     </div>
   );
 }
