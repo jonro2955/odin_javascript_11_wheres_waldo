@@ -5,10 +5,12 @@ export default function TopScoresPage() {
   return (
     <div id='RecordsPage' className='page'>
       <Nav headline='Top Scores' />
+      {/* h1 for spacing */}
+      <h1></h1>
       <div id='recordsContainer'>
-        <Records level='planets' />
-        <Records level='countries' />
-        <Records level='games' />
+        <Records title='planets' />
+        <Records title='countries' />
+        <Records title='games' />
       </div>
     </div>
   );

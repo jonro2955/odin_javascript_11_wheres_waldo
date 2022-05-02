@@ -17,7 +17,7 @@ export default function HomePage() {
         <LevelTile levelName='countries' />
         <LevelTile levelName='games' />
       </div>
-      <h5>Top 10 Scores</h5>
+      <h3>Top 10</h3>
       <Records limit={10} />
     </div>
   );

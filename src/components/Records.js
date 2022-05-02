@@ -10,7 +10,7 @@ import {
 export default function Records(props) {
   const [records, setRecords] = useState([]);
   const [limit] = useState(props.limit ? props.limit : 100);
-  const [level] = useState(props.level);
+  const [title] = useState(props.title);
 
   async function onSnapRead() {
     const array = [];
@@ -19,13 +19,13 @@ export default function Records(props) {
       querySnapshot.forEach((doc) => {
         array.push(doc.data());
       });
-      // If a level prop is provided, only return level-specific records 
-      if (level) {
+      // If a title prop is provided, only return title-specific records
+      if (title) {
         setRecords(
           array.slice(0, limit).map((item, index) => {
-            if (level && item.level === level)
+            if (title && item.level === title)
               return (
-                <div key={index}>
+                <div className='recordEntry' key={index}>
                   <span className='recordEntryFieldLabel'>Time:</span>&nbsp;
                   <span className='recordEntryFieldData'>
                     {item.seconds} seconds
@@ -39,21 +39,21 @@ export default function Records(props) {
               );
           })
         );
-        // If a level prop is not provided return all records
+        // If a title prop is not provided, return all records
       } else {
         setRecords(
           array.slice(0, limit).map((item, index) => {
             return (
-              <div key={index}>
+              <div className='recordEntry' key={index}>
                 <span className='recordEntryNum'>{index + 1})</span>&nbsp;
-                <span className='recordEntryFieldLabel'>Name:</span>&nbsp;
-                <span className='recordEntryFieldData'>
-                  {item.name.toUpperCase()}
-                </span>
-                &nbsp;
                 <span className='recordEntryFieldLabel'>Time:</span>&nbsp;
                 <span className='recordEntryFieldData'>
                   {item.seconds} seconds
+                </span>
+                &nbsp;
+                <span className='recordEntryFieldLabel'>Name:</span>&nbsp;
+                <span className='recordEntryFieldData'>
+                  {item.name.toUpperCase()}
                 </span>
                 &nbsp;
                 <span className='recordEntryFieldLabel'>Level:</span>&nbsp;
@@ -75,7 +75,7 @@ export default function Records(props) {
 
   return (
     <div id='Records'>
-      <h3>{level ? level.toUpperCase() +' RECORDS' : ''}</h3>
+      <h3 className='center'>{title ? title.toUpperCase() : ''}</h3>
       <div>{records}</div>
     </div>
   );

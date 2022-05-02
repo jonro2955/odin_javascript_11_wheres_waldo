@@ -16,6 +16,7 @@ import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 //Default export component: <GamePage/>
 export default function GamePage() {
+  //variables
   const level = useParams().level;
   const [gameOn, setGameOn] = useState(false);
   const [timerOn, setTimerOn] = useState(false);
@@ -25,7 +26,7 @@ export default function GamePage() {
   const [seconds, setSeconds] = useState(0);
   let secondsCounter = 0;
 
-  //[timerOn]
+  //[timerOn] useEffect
   useEffect(() => {
     let interval;
     if (timerOn) {
@@ -43,7 +44,7 @@ export default function GamePage() {
     };
   }, [timerOn]);
 
-  //[seconds]
+  //[seconds] useEffect
   useEffect(() => {
     document.getElementById('seconds').textContent = paddedTime(seconds % 60);
     document.getElementById('minutes').textContent = paddedTime(
@@ -51,7 +52,7 @@ export default function GamePage() {
     );
   }, [seconds]);
 
-  // Save a new name entry to Firestore.
+  // Save a new name and time to Firestore.
   async function saveNameToCloud() {
     let name = document.getElementById('playerName').value;
     if (name.length > 0) {
@@ -76,8 +77,8 @@ export default function GamePage() {
     M.toast({
       html: msg,
       inDuration: 300,
-      outDuration: 375,
-      displyLength: 3000,
+      outDuration: 300,
+      displyLength: 2000,
       classes: 'rounded',
       completeCallback: () => {
         console.log(msg);
@@ -85,6 +86,7 @@ export default function GamePage() {
     });
   }
 
+  //attached to game image's onClick event
   function imageClickHandler(e) {
     //toggle menu
     menuOn ? setMenuOn(false) : setMenuOn(true);
@@ -92,6 +94,7 @@ export default function GamePage() {
     setClickedCoords({ x: e.pageX, y: e.pageY });
   }
 
+  //passed as a prop to <TargetMenu/>
   function menuClickHandler(e) {
     const gameImage = document.getElementById('gameImage');
     let clickedX = clickedCoords['x'] - gameImage.offsetLeft;
@@ -112,7 +115,7 @@ export default function GamePage() {
       if (allLevelTargetsFound(level, tmp)) {
         toast(`All found in ${seconds} seconds`);
         setTimerOn(false);
-        openNameEntryModal();
+        openEntryForm();
       }
       //else: missed. Reset user click
     } else {
@@ -158,7 +161,7 @@ export default function GamePage() {
     }
   }
 
-  // Change mouse pointer inside game image
+  // Attached to 'mouseEnter' event of game image to change mouse pointer
   function imageMouseEnterHandler() {
     //The div with id=ringCursor is styled to make it look special
     const ringCursor = document.getElementById('ringCursor');
@@ -176,20 +179,24 @@ export default function GamePage() {
     document.getElementById('ringCursor').style.display = 'none';
   }
 
+  //Click animation on
   function imageMouseDownHandler() {
     document.getElementById('ringCursor').classList.add('clickAnimation');
   }
 
+  //Click animation off
   function imageMouseUpHandler() {
     document.getElementById('ringCursor').classList.remove('clickAnimation');
   }
 
-  function openNameEntryModal() {
+  //open name entry modal
+  function openEntryForm() {
     let elem = document.getElementById('nameEntryModal');
     var modal = M.Modal.init(elem, { dismissible: false });
     modal.open();
   }
 
+  //close name entry modal
   function closeEntryForm() {
     let elem = document.getElementById('nameEntryModal');
     var modal = M.Modal.init(elem, { dismissible: false });
@@ -259,6 +266,7 @@ export default function GamePage() {
           targets={targets}
         />
       )}
+
       {/* Name entry modal */}
       <div id='nameEntryModal' className='modal'>
         <div className='modal-content'>
