@@ -1,6 +1,6 @@
 # Where's Waldo?
 
-This project demonstrate my skills in using ReactJS and Firebase to develop interactive webpages. The app is a photo tagging game that implements a digital version of "Where's Waldo", an activity where users try to find hidden elements inside a picture. The goal is to find the assigned items as fast as possible under a timer. Upon completion, users may enter their name to register their time into a cloud database. 
+This project demonstrate my skills in using ReactJS and Firebase to develop interactive webapps with backend functionalities. The app implements an online version of "Where's Waldo", an activity where users try to find several hidden elements inside of a picture as fast as possible. Each attempt is timed, and upon completion of a level, the user may enter their name into a cloud based leaderboard. 
 
 <hr/>
 
@@ -8,16 +8,17 @@ This project demonstrate my skills in using ReactJS and Firebase to develop inte
 
 ### Focus
 
-- Organizing JavaScript Code using modules and Webpack
-- Dynamic user interface interactions with mouseclick contect menus
-- Async server fetching 
+- Organizing JavaScript Code using JavaScript modules and Webpack
+- Dynamic user interface interactions with mouseclick activated context menus
+- Asynchronous server fetching 
 - Using Firebase SDK to implement cloud based backend services
-- ReactJS
+- CSS styling tricks such as custom mouse pointers with animated click effects
 
 ### Tools
 
-- React 
+- ReactJS 
 - Webpack
+- Materialize CSS
 - Firebase
 - Git
 
