@@ -1,6 +1,6 @@
 //node package imports
 import { useParams } from 'react-router-dom';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import M from 'materialize-css';
 //image imports
 import planetsImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/planets.jpg';
@@ -8,7 +8,6 @@ import countriesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_jav
 import gamesImg from '/home/pc/TOP/Projects/2_Full_Stack_JavaScript/odin_javascript_11_wheres_waldo/src/images/games.jpg';
 //my own components
 import Nav from '../Nav';
-import Records from '../Records';
 import TargetMenu from '../TargetMenu';
 import { targetData, attemptResult } from '../targets.js';
 //firebase imports

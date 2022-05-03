@@ -23,7 +23,7 @@ export default function Records(props) {
       if (title) {
         setRecords(
           array.slice(0, limit).map((item, index) => {
-            if (title && item.level === title)
+            if (title && item.level === title) {
               return (
                 <div className='recordEntry' key={index}>
                   <span className='recordEntryFieldLabel'>Time:</span>&nbsp;
@@ -37,6 +37,7 @@ export default function Records(props) {
                   </span>
                 </div>
               );
+            }
           })
         );
         // If a title prop is not provided, return all records

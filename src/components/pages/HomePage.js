@@ -19,6 +19,7 @@ export default function HomePage() {
       </div>
       <h3>Top 10</h3>
       <Records limit={10} />
+      <h6 style={{ marginTop: '50px' }}>Database provided by Firebase</h6>
     </div>
   );
 }
