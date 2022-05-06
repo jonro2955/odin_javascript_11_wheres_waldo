@@ -283,7 +283,7 @@ export default function GamePage() {
             onClick={restart}
             className='modal-close waves-effect waves-green btn-flat'
           >
-            Restart
+            Cancel
           </button>
           <button
             onClick={saveNameToCloud}
