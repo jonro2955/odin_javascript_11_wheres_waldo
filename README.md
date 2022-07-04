@@ -1,6 +1,4 @@
-# Where's Waldo?
-
-[Live Site](https://jonro2955.github.io/odin_javascript_11_wheres_waldo/)
+# Where's Waldo? [Live Site](https://jonro2955.github.io/odin_javascript_11_wheres_waldo/)
 
 This app implements an interactive version of the "Where's Waldo" game, an activity where players try to find several visual elements obscured inside of a picture containing many different visual objects. In this version, the goal is to find all assigned items as fast as possible while being timed. Upon completion, the user may enter their name and time record into a cloud based leaderboard. 
 
